@@ -14,7 +14,7 @@ class Card extends Component {
     return (
       <div className="card">
         <div className="img-wrapper">
-          <img src={img} alt={`img-${name}`} className="card__img" />
+          <img src={img} alt="person-img" className="card__img" />
           <i
             className={
               favourites.includes(name)
