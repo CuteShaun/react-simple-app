@@ -17,7 +17,7 @@ class App extends Component {
 
   state = {
     list: [],
-    favourites: [],
+    favourites: JSON.parse(localStorage.getItem("favourites")),
     removeFlag: true,
     addFlag: null,
     listCopy: [],
@@ -37,11 +37,6 @@ class App extends Component {
     this.setState({
       list: list,
       listCopy: this.state.list
-    });
-
-    this.setState(state => {
-      let newArr = JSON.parse(localStorage.getItem("favourites"));
-      return { favourites: newArr };
     });
 
     this.addMoreCards();
