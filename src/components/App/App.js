@@ -17,7 +17,10 @@ class App extends Component {
 
   state = {
     list: [],
-    favourites: JSON.parse(localStorage.getItem("favourites")),
+    favourites:
+      JSON.parse(localStorage.getItem("favourites")) === null
+        ? []
+        : JSON.parse(localStorage.getItem("favourites")),
     removeFlag: true,
     addFlag: null,
     listCopy: [],

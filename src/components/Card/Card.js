@@ -11,6 +11,8 @@ class Card extends Component {
       img,
       favourites
     } = this.props;
+
+
     return (
       <div className="card">
         <div className="img-wrapper">
