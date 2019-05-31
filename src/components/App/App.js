@@ -50,7 +50,9 @@ class App extends Component {
 
     this.setState(state => {
       let value = event.target.value;
-      let filteredListCopy = [...state.filteredListCopy];
+      let filteredListCopy = [
+        ...state.list.slice(0, state.quantity + state.position - state.quantity)
+      ];
       let filteredCopy;
 
       if (value !== "Human" && value !== "Alien") {
@@ -58,7 +60,9 @@ class App extends Component {
       } else {
         filteredCopy = filteredListCopy.filter(item => item.species === value);
       }
-      return { filteredList: filteredCopy };
+      return {
+        filteredList: filteredCopy
+      };
     });
   }
 
@@ -70,7 +74,7 @@ class App extends Component {
         const filtered = [...state.filteredList].filter(item => {
           return item.name
             .toLowerCase()
-            .includes(event.target.value.toLowerCase());
+            .includes(event.target.value.toLowerCase().trim());
         });
 
         return { filteredList: filtered };
@@ -78,7 +82,10 @@ class App extends Component {
 
       if (!event.target.value) {
         return {
-          filteredList: state.list.slice(0, state.quantity + state.position - 4)
+          filteredList: state.list.slice(
+            0,
+            state.quantity + state.position - state.quantity
+          )
         };
       }
     });
@@ -109,15 +116,17 @@ class App extends Component {
           filteredList: state.filteredList.concat(filtered),
           filteredListCopy: state.filteredListCopy.concat(filtered),
           position:
-            state.position <= state.list.length - 1 ? state.position + 4 : 19,
-          addFlag: state.position >= state.list.length - 1 ? true : false,
+            state.position <= state.list.length
+              ? state.position + state.quantity
+              : state.list.length - 1,
+          addFlag: state.position >= state.list.length ? true : false,
           removeFlag: false
         };
       });
     } else {
       this.setState(state => {
         return {
-          position: state.position + 4,
+          position: state.position + state.quantity,
           filteredList: state.filteredList.concat(filtered),
           filteredListCopy: state.filteredList.concat(filtered),
           removeFlag: false
