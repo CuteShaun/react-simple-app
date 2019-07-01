@@ -22,7 +22,7 @@ class App extends Component {
         ? []
         : JSON.parse(localStorage.getItem("favourites")),
     removeFlag: true,
-    addFlag: null,
+    addFlag: false,
     listCopy: [],
     currentFiltered: [],
     filteredList: [],
@@ -37,9 +37,13 @@ class App extends Component {
 
   async componentDidMount() {
     const list = await getData();
-    this.setState({
-      list: list,
-      listCopy: this.state.list
+    this.setState(state => {
+      return {
+        list: list,
+        listCopy: state.list,
+        filteredList: list,
+        currentFiltered: list
+      };
     });
 
     this.addMoreCards();
@@ -50,18 +54,18 @@ class App extends Component {
 
     this.setState(state => {
       let value = event.target.value;
-      let filteredListCopy = [
-        ...state.list.slice(0, state.quantity + state.position - state.quantity)
-      ];
       let filteredCopy;
 
       if (value !== "Human" && value !== "Alien") {
-        filteredCopy = filteredListCopy;
+        filteredCopy = state.list;
       } else {
-        filteredCopy = filteredListCopy.filter(item => item.species === value);
+        filteredCopy = state.list.filter(item => item.species === value);
       }
+
       return {
-        filteredList: filteredCopy
+        currentFiltered: filteredCopy,
+        filteredList: filteredCopy.slice(0, 4),
+        position: 4
       };
     });
   }
@@ -105,7 +109,7 @@ class App extends Component {
   }
 
   addMoreCards() {
-    let filtered = this.state.list.slice(
+    let filtered = this.state.currentFiltered.slice(
       this.state.position,
       this.state.quantity + this.state.position
     );
@@ -114,9 +118,9 @@ class App extends Component {
       this.setState(state => {
         return {
           filteredList: state.filteredList.concat(filtered),
-          filteredListCopy: state.filteredListCopy.concat(filtered),
+          filteredListCopy: state.filteredList.concat(filtered),
           position:
-            state.position <= state.list.length
+            state.position < state.list.length
               ? state.position + state.quantity
               : state.list.length - 1,
           addFlag: state.position >= state.list.length ? true : false,
@@ -127,8 +131,8 @@ class App extends Component {
       this.setState(state => {
         return {
           position: state.position + state.quantity,
-          filteredList: state.filteredList.concat(filtered),
-          filteredListCopy: state.filteredList.concat(filtered),
+          filteredList: filtered,
+          filteredListCopy: filtered,
           removeFlag: false
         };
       });
@@ -141,21 +145,21 @@ class App extends Component {
     this.setState(state => {
       filtered.splice(-4, 4);
 
-      if (this.state.position <= 3) {
+      if (state.position <= 3 || state.filteredList.length <= 4) {
         return {
           filteredList: [],
           filteredListCopy: [],
           position: 0,
           removeFlag: true
         };
+      } else {
+        return {
+          filteredList: filtered,
+          addFlag: false,
+          filteredListCopy: filtered,
+          position: state.position <= 0 ? 0 : state.position - 4
+        };
       }
-
-      return {
-        filteredList: filtered,
-        addFlag: false,
-        filteredListCopy: filtered,
-        position: state.position <= 0 ? 0 : state.position - 4
-      };
     });
   }
 
